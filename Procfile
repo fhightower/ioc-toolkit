@@ -1,0 +1,1 @@
+web: gunicorn ioc_toolkit.ioc_toolkit:app --log-file=-
