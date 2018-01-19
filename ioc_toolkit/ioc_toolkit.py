@@ -6,10 +6,28 @@ from flask import flash, Flask, render_template, redirect, request, url_for
 app = Flask(__name__)
 app.secret_key = 'abc'
 
+tools = [{
+    'name': 'Punycode',
+    'description': 'Convert punycode to unicode and visa-versa',
+    'function': 'punycode'
+}]
+
 
 @app.route("/")
 def index():
-    return render_template("index.html")
+    return render_template("index.html", tools=tools)
+
+
+@app.route("/punycode")
+def punycode():
+    description = None
+
+    for tool in tools:
+        if tool['function'] == 'punycode':
+            description = tool['description']
+            break
+
+    return render_template("punycode.html", description=description)
 
 
 @app.route("/api/v1/convert", methods=['POST'])
