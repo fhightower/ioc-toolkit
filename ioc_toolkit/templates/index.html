@@ -1,13 +1,8 @@
 {% extends "layout.html" %}
 {% block content %}
-<div class="row">
-    <h1>Welcome!</h1>
-    Indicator of Compromise (IOC) Toolkit in progress. Check back soon for a list of available tools.
-
     <ul>
     {% for tool in tools %}
-        <li><a href="{{ url_for(tool.function) }}">{{ tool.name }}</a> - {{ tool.description }}</li>
+        <li><a href="/{{ tool.uri }}">{{ tool.name }}</a> - {{ tool.description }}</li>
     {% endfor %}
     </ul>
-</div>
 {% endblock %}
