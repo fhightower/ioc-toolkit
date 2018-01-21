@@ -36,6 +36,8 @@
         {{ description }}
     </div>
 
+    <br>
+
     <div class="row">
         {% with messages = get_flashed_messages(with_categories=true) %}
           {% if messages %}
@@ -45,6 +47,8 @@
           {% endif %}
         {% endwith %}
     </div>
+
+    <br>
 
     <div class="row">
         {% block content %}{% endblock %}

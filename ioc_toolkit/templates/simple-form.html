@@ -1,0 +1,9 @@
+{% extends "layout.html" %}
+{% block content %}
+    <form action="{{ url_for('ioc_toolkit_blueprint.simple_form', page=uri) }}">
+        <textarea name="text" cols="30" rows="10" placeholder="Enter text here..."></textarea>
+        {% for action in actions %}
+            <input type="submit" name="action" value="{{ action.title() }}">
+        {% endfor %}
+    </form>
+{% endblock content %}

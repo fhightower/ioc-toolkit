@@ -65,7 +65,8 @@ def simple_form(page):
     name, description, function, actions = _get_route_data(page)
 
     if name is None:
-        return "No page found :("
+        flash('The page "{}" does not exist. Try one of the links below.'.format(page), 'error')
+        return redirect(url_for('index'))
 
     if request.args.get('action') == 'Clear':
         request.args = []
