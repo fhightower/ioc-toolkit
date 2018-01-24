@@ -1,25 +1,16 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import sys
+import os
+
 from flask import flash, Flask, Blueprint, render_template, redirect, request, url_for
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "./")))
+from tools.tools import url_encode_decode, punycode
 
 app = Flask(__name__)
 app.secret_key = 'abc'
-
-
-def url_encode_decode(text, action):
-    """Handle URL encoding/decoding."""
-    print("text {}".format(text))
-    print("action {}".format(action))
-    return "hi!"
-
-
-def punycode(text, action):
-    """."""
-    print("text {}".format(text))
-    print("action {}".format(action))
-    return "hi!"
-
 
 tools = [{
     'name': 'Punycode',
@@ -68,16 +59,21 @@ def simple_form(page):
         flash('The page "{}" does not exist. Try one of the links below.'.format(page), 'error')
         return redirect(url_for('index'))
 
-    if request.args.get('action') == 'Clear':
+    action = None
+
+    if request.args.get('action'):
+        action = request.args['action'].lower()
+
+    if action == 'clear':
         request.args = []
         return render_template(template, name=name, description=description, function=function, actions=actions, uri=page)
 
-    if request.args.get('text') and request.args.get('action'):
-        function(request.args.get('text'), request.args.get('action'))
+    if request.args.get('text') and action:
+        response = function(request.args.get('text'), action)
 
-        return render_template(template, name=name, description=description, function=function, actions=actions, uri=page)
-    elif request.args.get('action'):
-        flash('Please enter some text to {}.'.format(request.args['action'].lower()), 'error')
+        return render_template(template, name=name, description=description, function=function, actions=actions, uri=page, output=response, text=request.args.get('text'))
+    elif action:
+        flash('Please enter some text to {}.'.format(action), 'error')
         return render_template(template, name=name, description=description, function=function, actions=actions, uri=page)
     else:
         return render_template(template, name=name, description=description, function=function, actions=actions, uri=page)
@@ -88,7 +84,7 @@ app.register_blueprint(ioc_toolkit_blueprint)
 
 @app.route("/")
 def index():
-    return render_template("index.html", name='Welcome to the Indicator of Compromise Toolkit!', description='Indicator of Compromise (IOC) Toolkit in progress. Check back soon for a list of available tools.', tools=tools)
+    return render_template("index.html", name='Indicator of Compromise Toolkit', description='Indicator of Compromise (IOC) Toolkit in progress. Check back soon for a list of available tools.', tools=tools)
 
 
 @app.route("/api/v1/convert", methods=['POST'])
