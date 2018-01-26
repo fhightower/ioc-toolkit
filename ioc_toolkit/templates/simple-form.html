@@ -1,11 +1,12 @@
 {% extends "layout.html" %}
 {% block content %}
     <div class="columns large-6">
-        <form action="{{ url_for('ioc_toolkit_blueprint.simple_form', page=uri) }}">
+        <form action="{{ url_for('simple_form', page=uri) }}">
             <textarea name="text" cols="30" rows="10" placeholder="Enter text here...">{{ text }}</textarea>
             {% for action in actions %}
                 <input type="submit" name="action" value="{{ action.title() }}">
             {% endfor %}
+            <input type="submit" value="Clear" class="float-right">
         </form>
     </div>
     <div class="columns large-6 output">

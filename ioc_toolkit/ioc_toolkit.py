@@ -4,7 +4,7 @@
 import sys
 import os
 
-from flask import flash, Flask, Blueprint, render_template, redirect, request, url_for
+from flask import flash, Flask, render_template, redirect, request, url_for
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "./")))
 from tools.tools import url_encode_decode, punycode
@@ -47,10 +47,12 @@ def _get_route_data(route_name):
         return None, None, None, None
 
 
-ioc_toolkit_blueprint = Blueprint('ioc_toolkit_blueprint', __name__, template_folder='templates')
+@app.route("/")
+def index():
+    return render_template("index.html", name='Indicator of Compromise Toolkit', description='Indicator of Compromise (IOC) Toolkit in progress. Check back soon for a list of available tools.', tools=tools)
 
 
-@ioc_toolkit_blueprint.route('/<page>')
+@app.route('/<page>')
 def simple_form(page):
     template = "simple-form.html"
     name, description, function, actions = _get_route_data(page)
@@ -79,7 +81,7 @@ def simple_form(page):
         return render_template(template, name=name, description=description, function=function, actions=actions, uri=page)
 
 
-@ioc_toolkit_blueprint.route('/api/v1/<page>', methods=['GET', 'POST'])
+@app.route('/api/v1/<page>', methods=['GET', 'POST'])
 def simple_api(page):
     name, description, function, actions = _get_route_data(page)
 
@@ -96,14 +98,6 @@ def simple_api(page):
                 return function(request.form.get('text'), request.form.get('action'))
         else:
             return usage
-
-
-app.register_blueprint(ioc_toolkit_blueprint)
-
-
-@app.route("/")
-def index():
-    return render_template("index.html", name='Indicator of Compromise Toolkit', description='Indicator of Compromise (IOC) Toolkit in progress. Check back soon for a list of available tools.', tools=tools)
 
 
 """LEGACY CODE THAT SHOULD BE KEPT FOR THE TIME BEING:"""
