@@ -16,14 +16,14 @@ tools = [{
     'name': 'Punycode',
     'description': 'Convert punycode to unicode and visa-versa',
     'function': punycode,
-    'actions': ['convert'],
+    'actions': ['decode', 'encode'],
     'uri': 'punycode'
 }, {
     'name': 'URL Encoder/Decoder',
     'description': 'Encode/Decode a url',
     'function': url_encode_decode,
     'actions': ['encode', 'decode'],
-    'uri': 'url-encode-decode'
+    'uri': 'url-encode-decode',
 }]
 
 
@@ -79,6 +79,25 @@ def simple_form(page):
         return render_template(template, name=name, description=description, function=function, actions=actions, uri=page)
 
 
+@ioc_toolkit_blueprint.route('/api/v1/<page>', methods=['GET', 'POST'])
+def simple_api(page):
+    name, description, function, actions = _get_route_data(page)
+
+    usage = 'Usage: To use this branch, make a POST request to /api/v1/{} with a JSON body that includes a "text" key providing the text which will be operated on and an "action" which will tell the API what to do with the text. The available action(s) for this page is/are: {}.'.format(page, ", ".join(actions))
+
+    if name is None:
+        return 'The requested page ({}) does not exist.'.format(page)
+    else:
+        if request.method == 'POST':
+            # TODO: also check request.data
+            if not request.form.get('action') or not request.form.get('text'):
+                return 'Usage: To use this branch, make a POST request to /api/v1/{} with a JSON body that includes a "text" key providing the text which will be operated on and an "action" which will tell the API what to do with the text. The available action(s) for this page is/are: {}.'.format(page, ", ".join(actions))
+            else:
+                return function(request.form.get('text'), request.form.get('action'))
+        else:
+            return usage
+
+
 app.register_blueprint(ioc_toolkit_blueprint)
 
 
@@ -87,6 +106,7 @@ def index():
     return render_template("index.html", name='Indicator of Compromise Toolkit', description='Indicator of Compromise (IOC) Toolkit in progress. Check back soon for a list of available tools.', tools=tools)
 
 
+"""LEGACY CODE THAT SHOULD BE KEPT FOR THE TIME BEING:"""
 @app.route("/api/v1/convert", methods=['POST'])
 def api():
     """Keep this code for legacy purposes."""
