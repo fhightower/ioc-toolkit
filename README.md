@@ -4,12 +4,33 @@
 
 Helpful tools for analyzing and working with Indicators of Compromise (IOCs).
 
-## Quick Start
+## Development
+
+### Quick Start
+
+After cloning the repo...
+
+To create a [virtual environment](http://docs.python-guide.org/en/latest/dev/virtualenvs/) for the app, run:
+
+```
+make venv
+```
 
 Clone the app and run the application at [http://127.0.0.1:5000/](http://127.0.0.1:5000/):
 
-    make run
+```
+make run
+```
 
-## Prerequisites
+To test the app, run:
 
-This is a [Flask](http://flask.pocoo.org) app designed to run using python3. It can also be uploaded to Heroku easily.
+```
+make test
+```
+
+### Adding a New Tool
+
+When adding a new tool, there are two things which must be added:
+
+1. Add a function for the tool in `ioc_toolkit/tools/tools.py`.
+2. Add a json entry to the list of `tools` in `ioc_toolkit/ioc_toolkit.py`.

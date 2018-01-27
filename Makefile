@@ -8,4 +8,4 @@ run:
 	~/.virtualenvs/ioc_toolkit/bin/python ioc_toolkit/ioc_toolkit.py
 
 test:
-	~/.virtualenvs/ioc_toolkit/bin/python -m unittest
+	~/.virtualenvs/ioc_toolkit/bin/python -m pytest
