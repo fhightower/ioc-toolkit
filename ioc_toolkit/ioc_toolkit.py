@@ -7,23 +7,59 @@ import os
 from flask import flash, Flask, render_template, redirect, request, url_for
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "./")))
-from tools.tools import url_encode_decode, punycode
+from tools.tools import url_encode_decode, punycode, base64_encode_decode
 
 app = Flask(__name__)
 app.secret_key = 'abc'
 
 tools = [{
     'name': 'Punycode',
-    'description': 'Convert punycode to unicode and visa-versa',
+    'description': 'Convert punycode to unicode and visa-versa.',
     'function': punycode,
-    'actions': ['decode', 'encode'],
-    'uri': 'punycode'
+    'actions': ['encode', 'decode'],
+    'uri': 'punycode',
+    'tests': {
+        'encode': {
+            'input': 'xn--l3h.com',
+            'output': '☁.com'
+        },
+        'decode': {
+            'input': '☁.com',
+            'output': 'xn--l3h.com'
+        }
+    }
 }, {
     'name': 'URL Encoder/Decoder',
-    'description': 'Encode/Decode a url',
+    'description': 'Encode/Decode a url.',
     'function': url_encode_decode,
     'actions': ['encode', 'decode'],
     'uri': 'url-encode-decode',
+    'tests': {
+        'encode': {
+            'input': 'test=20*2',
+            'output': 'test%3D20%2A2'
+        },
+        'decode': {
+            'input': 'test%253D20%252A2',
+            'output': 'test=20*2'
+        }
+    }
+}, {
+    'name': 'Base64 Encoder/Decoder',
+    'description': 'Encode/Decode base64 text.',
+    'function': base64_encode_decode,
+    'actions': ['encode', 'decode'],
+    'uri': 'base64-encode-decode',
+    'tests': {
+        'encode': {
+            'input': 'test',
+            'output': 'dGVzdA=='
+        },
+        'decode': {
+            'input': 'dGVzdA==',
+            'output': 'test'
+        }
+    }
 }]
 
 

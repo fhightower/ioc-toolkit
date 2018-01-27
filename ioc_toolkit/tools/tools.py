@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 """Tools used in the ioc_toolkit."""
 
+import base64
 import html
 import urllib.parse
 
@@ -34,3 +35,16 @@ def punycode(text, action):
         return text.encode('utf-8').decode('idna')
     else:
         return RuntimeError('Unknown action provided to punycode function: {}'.format(action))
+
+
+def base64_encode_decode(text, action):
+    """Handle URL encoding/decoding."""
+    if isinstance(text, str):
+        text = text.encode('utf-8')
+
+    if action == 'decode':
+        return base64.b64decode(text).decode('utf-8')
+    elif action == 'encode':
+        return base64.b64encode(text).decode('utf-8')
+    else:
+        raise RuntimeError("Unknown action provided to url_encode_decode function: {}".format(action))
