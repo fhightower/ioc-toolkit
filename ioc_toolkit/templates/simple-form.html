@@ -1,15 +1,31 @@
 {% extends "layout.html" %}
 {% block content %}
+    <script>
+        function copyText(elementId) {
+            /* Copy the text from the given element. */
+            var textArea = document.getElementById(elementId);
+            textArea.select();
+            var copied = document.execCommand("copy");
+            if (copied) {
+                textArea.blur();
+                $.jGrowl('Text copied', {group: 'success-growl'});
+            } else {
+                $.jGrowl('Unable to copy text', {group: 'failure-growl'});
+            }
+        }
+    </script>
+
     <div class="columns large-6">
         <form action="{{ url_for('simple_form', page=uri) }}">
             <textarea name="text" cols="30" rows="10" placeholder="Enter text here...">{{ text }}</textarea>
             {% for action in actions %}
-                <input type="submit" name="action" value="{{ action.title() }}">
+                <input class="button blue float-right action-button" type="submit" name="action" value="{{ action.title() }}">
             {% endfor %}
-            <input type="submit" value="Clear" class="float-right">
+            <input type="submit" value="Clear" class="button secondary">
         </form>
     </div>
-    <div class="columns large-6 output">
-        {{ output }}
+    <div class="columns large-6">   
+        <textarea id="output" class="output" cols="30" rows="10">{{ output }}</textarea>
+        <button class="button secondary float-right" onclick="copyText('output')">Copy Output</button>
     </div>
 {% endblock content %}
