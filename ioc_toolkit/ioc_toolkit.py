@@ -1,16 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import sys
 import os
+import sys
 
 from flask import flash, Flask, render_template, redirect, request, url_for
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "./")))
 from tools.tools import url_encode_decode, punycode, base64_encode_decode
-
-app = Flask(__name__)
-app.secret_key = 'abc'
 
 tools = [{
     'name': 'Punycode',
@@ -62,6 +59,9 @@ tools = [{
     }
 }]
 
+app = Flask(__name__)
+app.secret_key = 'abc'
+
 
 def _get_route_data(route_name):
     """Return data about the route with the given name."""
@@ -69,18 +69,14 @@ def _get_route_data(route_name):
 
     for tool in tools:
         if tool['uri'] == route_name:
-            name = tool['name']
-            description = tool['description']
-            function = tool['function']
-            actions = tool['actions']
-
+            desired_route = tool
             route_found = True
             break
 
     if route_found:
-        return name, description, function, actions
+        return desired_route
     else:
-        return None, None, None, None
+        return None
 
 
 @app.route("/")
@@ -90,10 +86,11 @@ def index():
 
 @app.route('/<page>')
 def simple_form(page):
+    """Create a simple UI for the tools."""
     template = "simple-form.html"
-    name, description, function, actions = _get_route_data(page)
+    data = _get_route_data(page)
 
-    if name is None:
+    if data is None:
         flash('The page "{}" does not exist. Try one of the links below.'.format(page), 'error')
         return redirect(url_for('index'))
 
@@ -104,34 +101,35 @@ def simple_form(page):
 
     if action == 'clear':
         request.args = []
-        return render_template(template, name=name, description=description, function=function, actions=actions, uri=page)
+        return render_template(template, name=data['name'], description=data['description'], function=data['function'], actions=data['actions'], uri=page)
 
     if request.args.get('text') and action:
-        response = function(request.args.get('text'), action)
+        response = data['function'](request.args.get('text'), action)
 
-        return render_template(template, name=name, description=description, function=function, actions=actions, uri=page, output=response, text=request.args.get('text'))
+        return render_template(template, name=data['name'], description=data['description'], function=data['function'], actions=data['actions'], uri=page, output=response, text=request.args.get('text'))
     elif action:
         flash('Please enter some text to {}.'.format(action), 'error')
-        return render_template(template, name=name, description=description, function=function, actions=actions, uri=page)
+        return render_template(template, name=data['name'], description=data['description'], function=data['function'], actions=data['actions'], uri=page)
     else:
-        return render_template(template, name=name, description=description, function=function, actions=actions, uri=page)
+        return render_template(template, name=data['name'], description=data['description'], function=data['function'], actions=data['actions'], uri=page)
 
 
 @app.route('/api/v1/<page>', methods=['GET', 'POST'])
 def simple_api(page):
-    name, description, function, actions = _get_route_data(page)
+    """Create a simple API from the tools."""
+    data = _get_route_data(page)
 
-    usage = 'Usage: To use this branch, make a POST request to /api/v1/{} with a JSON body that includes a "text" key providing the text which will be operated on and an "action" which will tell the API what to do with the text. The available action(s) for this page is/are: {}.'.format(page, ", ".join(actions))
+    usage = 'Usage: To use this branch, make a POST request to /api/v1/{} with a JSON body that includes a "text" key providing the text which will be operated on and an "action" which will tell the API what to do with the text. The available action(s) for this page is/are: {}.'.format(page, ", ".join(data['actions']))
 
-    if name is None:
+    if data is None:
         return 'The requested page ({}) does not exist.'.format(page)
     else:
         if request.method == 'POST':
             # TODO: also check request.data
             if not request.form.get('action') or not request.form.get('text'):
-                return 'Usage: To use this branch, make a POST request to /api/v1/{} with a JSON body that includes a "text" key providing the text which will be operated on and an "action" which will tell the API what to do with the text. The available action(s) for this page is/are: {}.'.format(page, ", ".join(actions))
+                return 'Usage: To use this branch, make a POST request to /api/v1/{} with a JSON body that includes a "text" key providing the text which will be operated on and an "action" which will tell the API what to do with the text. The available action(s) for this page is/are: {}.'.format(page, ", ".join(data['actions']))
             else:
-                return function(request.form.get('text'), request.form.get('action'))
+                return data['function'](request.form.get('text'), request.form.get('action'))
         else:
             return usage
 
