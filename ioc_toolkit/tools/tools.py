@@ -9,12 +9,25 @@ import urllib.parse
 
 def url_encode_decode(text, action):
     """Handle URL encoding/decoding."""
+    response = str()
+    error = False
+
     if action == 'decode':
-        return urllib.parse.unquote(text)
+        try:
+            response = urllib.parse.unquote(text)
+        except Exception as e:
+            error = True
+            response = str(e)
     elif action == 'encode':
-        return urllib.parse.quote(text)
+        try:
+            response = urllib.parse.quote(text)
+        except Exception as e:
+            error = True
+            response = str(e)
     else:
         raise RuntimeError('Unknown action provided to url_encode_decode function: {}'.format(action))
+
+    return response, error
 
 
 # def html_escape(text, action):
@@ -29,22 +42,48 @@ def url_encode_decode(text, action):
 
 def punycode(text, action):
     """Convert punycode to unicode and visa-versa."""
+    response = str()
+    error = False
+
     if action == 'decode':
-        return text.encode('idna').decode('utf-8')
+        try:
+            response = text.encode('idna').decode('utf-8')
+        except Exception as e:
+            error = True
+            response = str(e)
     elif action == 'encode':
-        return text.encode('utf-8').decode('idna')
+        try:
+            response = text.encode('utf-8').decode('idna')
+        except Exception as e:
+            error = True
+            response = str(e)
     else:
-        return RuntimeError('Unknown action provided to punycode function: {}'.format(action))
+        raise RuntimeError('Unknown action provided to punycode function: {}'.format(action))
+
+    return response, error
 
 
 def base64_encode_decode(text, action):
-    """Handle URL encoding/decoding."""
+    """Handle base 64 encoding/decoding."""
+    response = str()
+    error = False
+
     if isinstance(text, str):
         text = text.encode('utf-8')
 
     if action == 'decode':
-        return base64.b64decode(text).decode('utf-8')
+        try:
+            response = base64.b64decode(text).decode('utf-8')
+        except Exception as e:
+            error = True
+            response = str(e)
     elif action == 'encode':
-        return base64.b64encode(text).decode('utf-8')
+        try:
+            response = base64.b64encode(text).decode('utf-8')
+        except Exception as e:
+            error = True
+            response = str(e)
     else:
         raise RuntimeError("Unknown action provided to url_encode_decode function: {}".format(action))
+
+    return response, error

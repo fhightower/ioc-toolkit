@@ -104,9 +104,13 @@ def simple_form(page):
         return render_template(template, name=data['name'], description=data['description'], function=data['function'], actions=data['actions'], uri=page)
 
     if request.args.get('text') and action:
-        response = data['function'](request.args.get('text'), action)
+        response, error = data['function'](request.args.get('text'), action)
 
-        return render_template(template, name=data['name'], description=data['description'], function=data['function'], actions=data['actions'], uri=page, output=response, text=request.args.get('text'))
+        if error:
+            flash('ERROR: {}'.format(response), 'error')
+            return render_template(template, name=data['name'], description=data['description'], function=data['function'], actions=data['actions'], uri=page)
+        else:
+            return render_template(template, name=data['name'], description=data['description'], function=data['function'], actions=data['actions'], uri=page, output=response, text=request.args.get('text'))
     elif action:
         flash('Please enter some text to {}.'.format(action), 'error')
         return render_template(template, name=data['name'], description=data['description'], function=data['function'], actions=data['actions'], uri=page)

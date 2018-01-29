@@ -38,3 +38,11 @@ class ToolTester(unittest.TestCase):
                 print("running tests for {}\n{}".format(url, data))
                 rv = self.app.post(url, data=data)
                 self.assertIn(tool['tests'][test_action]['output'], rv.data.decode())
+
+    def test_error_handling(self):
+        """Test the API for each tool."""
+        url = '/base64-encode-decode?text=abc&action=decode'
+        rv = self.app.get(url)
+        self.assertIn('Base64 Encoder/Decoder', rv.data.decode())
+        self.assertIn('Encode/Decode base64 text.', rv.data.decode())
+        self.assertIn('ERROR: Incorrect padding', rv.data.decode())
