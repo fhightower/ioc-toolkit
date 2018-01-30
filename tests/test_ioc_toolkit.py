@@ -69,7 +69,8 @@ class IOCToolkitAPITestCase(unittest.TestCase):
         """Make sure all of the api pages return basic usage instructions."""
         for tool in ioc_toolkit.tools:
             rv = self.app.get('/api/v1/{}'.format(tool['uri']))
-            assert "Usage: " in rv.data.decode()
+            assert 'Usage: ' in rv.data.decode()
+            assert 'An example JSON body is:' in rv.data.decode()
 
     def test_empty_post(self):
         """Make sure all of the api pages return basic usage instructions if they receive an empty post request."""

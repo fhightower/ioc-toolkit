@@ -30,14 +30,27 @@ def url_encode_decode(text, action):
     return response, error
 
 
-# def html_escape(text, action):
-#     """Handle URL encoding/decoding."""
-#     if action == 'decode':
-#         return html.unescape(text)
-#     elif action == 'encode':
-#         return html.escape(text)
-#     else:
-#         raise RuntimeError("Unknown action provided to url_encode_decode function: {}".format(action))
+def html_escape(text, action):
+    """Escape/Unescape html."""
+    response = str()
+    error = False
+
+    if action == 'unescape':
+        try:
+            response = html.unescape(text)
+        except Exception as e:
+            error = True
+            response = str(e)
+    elif action == 'escape':
+        try:
+            response = html.escape(text)
+        except Exception as e:
+            error = True
+            response = str(e)
+    else:
+        raise RuntimeError('Unknown action provided to html_escape function: {}'.format(action))
+
+    return response, error
 
 
 def punycode(text, action):
@@ -84,6 +97,6 @@ def base64_encode_decode(text, action):
             error = True
             response = str(e)
     else:
-        raise RuntimeError("Unknown action provided to url_encode_decode function: {}".format(action))
+        raise RuntimeError("Unknown action provided to base64_encode_decode function: {}".format(action))
 
     return response, error

@@ -1,13 +1,15 @@
+
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import html
 import os
 import sys
 
 from flask import flash, Flask, render_template, redirect, request, url_for
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "./")))
-from tools.tools import url_encode_decode, punycode, base64_encode_decode
+from tools.tools import url_encode_decode, punycode, base64_encode_decode, html_escape
 
 tools = [{
     'name': 'Punycode',
@@ -23,6 +25,22 @@ tools = [{
         'decode': {
             'input': '☁.com',
             'output': 'xn--l3h.com'
+        }
+    }
+}, {
+    'name': 'HTML Escaper/Unescaper',
+    'description': 'HTLM escape/unescape text.',
+    'function': html_escape,
+    'actions': ['escape', 'unescape'],
+    'uri': 'html-escape',
+    'tests': {
+        'escape': {
+            'input': '<html>',
+            'output': '&lt;html&gt;'
+        },
+        'unescape': {
+            'input': '%26lt%3Bhtml%26gt%3B',
+            'output': '<html>'
         }
     }
 }, {
@@ -123,7 +141,7 @@ def simple_api(page):
     """Create a simple API from the tools."""
     data = _get_route_data(page)
 
-    usage = 'Usage: To use this branch, make a POST request to /api/v1/{} with a JSON body that includes a "text" key providing the text which will be operated on and an "action" which will tell the API what to do with the text. The available action(s) for this page is/are: {}.'.format(page, ", ".join(data['actions']))
+    usage = 'Usage: To use this branch, make a POST request to <code>/api/v1/{}</code> with a JSON body that includes a "text" key providing the text which will be operated on and an "action" which will tell the API what to do with the text. The available action(s) for this page is/are: {}. An example JSON body is: <code>{{ "text": "{}", "action": "{}" }}</code>'.format(page, ", ".join(data['actions']), html.escape(data['tests'][data['actions'][0]]['input']), data['actions'][0])
 
     if data is None:
         return 'The requested page ({}) does not exist.'.format(page)
@@ -131,7 +149,7 @@ def simple_api(page):
         if request.method == 'POST':
             # TODO: also check request.data
             if not request.form.get('action') or not request.form.get('text'):
-                return 'Usage: To use this branch, make a POST request to /api/v1/{} with a JSON body that includes a "text" key providing the text which will be operated on and an "action" which will tell the API what to do with the text. The available action(s) for this page is/are: {}.'.format(page, ", ".join(data['actions']))
+                return usage
             else:
                 return data['function'](request.form.get('text'), request.form.get('action'))
         else:

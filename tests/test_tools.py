@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 """Test specifically for the `url_encode_decode` function."""
 
+import html
 import urllib
 import unittest
 
@@ -18,13 +19,14 @@ class ToolTester(unittest.TestCase):
         for tool in ioc_toolkit.tools:
             for test_action in tool['tests']:
                 url = '/{}?text={}&action={}'.format(tool['uri'], tool['tests'][test_action]['input'], test_action)
-                print("running tests for {}".format(url))
+                print("running UI tests for {}".format(url))
                 rv = self.app.get(url)
                 self.assertIn(tool['name'], rv.data.decode())
                 self.assertIn(tool['description'], rv.data.decode())
-                # it is important to unquote the input in the test below so that the url_encode_decode tests will work properly
-                self.assertIn(urllib.parse.unquote(tool['tests'][test_action]['input']), rv.data.decode())
-                self.assertIn(tool['tests'][test_action]['output'], rv.data.decode())
+                # it is important to html escape and unquote the input in the test below so that the html_escape_unescape and url_encode_decode tests (respectively) will work properly
+                self.assertIn(html.escape(urllib.parse.unquote(tool['tests'][test_action]['input'])), rv.data.decode())
+                # the html.escape below is important at least for the html_escape function
+                self.assertIn(html.escape(tool['tests'][test_action]['output']), rv.data.decode())
 
     def test_api(self):
         """Test the API for each tool."""
@@ -32,10 +34,11 @@ class ToolTester(unittest.TestCase):
             for test_action in tool['tests']:
                 url = '/api/v1/{}'.format(tool['uri'])
                 data = {
-                    'text':  urllib.parse.unquote(tool['tests'][test_action]['input']),
+                    'text': urllib.parse.unquote(tool['tests'][test_action]['input']),
                     'action': test_action
                 }
-                print("running tests for {}\n{}".format(url, data))
+                print("running API tests for {}: {}".format(url, data))
+
                 rv = self.app.post(url, data=data)
                 self.assertIn(tool['tests'][test_action]['output'], rv.data.decode())
 
