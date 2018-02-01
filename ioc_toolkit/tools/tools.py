@@ -4,6 +4,7 @@
 
 import base64
 import html
+import ipaddress
 import urllib.parse
 
 
@@ -98,5 +99,34 @@ def base64_encode_decode(text, action):
             response = str(e)
     else:
         raise RuntimeError("Unknown action provided to base64_encode_decode function: {}".format(action))
+
+    return response, error
+
+
+def ipv6_expand_compress(text, action):
+    """Expand or collapse an IPv6 address."""
+    response = str()
+    error = False
+
+    try:
+        i = ipaddress.IPv6Address(text)
+    except Exception as e:
+        error = True
+        response = str(e)
+    else:
+        if action == 'expand':
+            try:
+                response = i.exploded
+            except Exception as e:
+                error = True
+                response = str(e)
+        elif action == 'compress':
+            try:
+                response = i.compressed
+            except Exception as e:
+                error = True
+                response = str(e)
+        else:
+            raise RuntimeError("Unknown action provided to ipv6_expand_compress function: {}".format(action))
 
     return response, error

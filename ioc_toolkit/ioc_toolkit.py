@@ -9,7 +9,7 @@ import sys
 from flask import flash, Flask, render_template, redirect, request, url_for
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "./")))
-from tools.tools import url_encode_decode, punycode, base64_encode_decode, html_escape
+from tools.tools import url_encode_decode, punycode, base64_encode_decode, html_escape, ipv6_expand_compress
 
 tools = [{
     'name': 'Punycode',
@@ -73,6 +73,22 @@ tools = [{
         'decode': {
             'input': 'dGVzdA==',
             'output': 'test'
+        }
+    }
+}, {
+    'name': 'IPv6 Expander/Compressor',
+    'description': 'Expand (Explode)/Compress (Collapse) an IPv6 Address.',
+    'function': ipv6_expand_compress,
+    'actions': ['expand', 'compress'],
+    'uri': 'ipv6-expand-compress',
+    'tests': {
+        'expand': {
+            'input': '2001:db8::1000',
+            'output': '2001:0db8:0000:0000:0000:0000:0000:1000'
+        },
+        'compress': {
+            'input': '2001:0db8:0000:0000:0000:0000:0000:1000',
+            'output': '2001:db8::1000'
         }
     }
 }]
