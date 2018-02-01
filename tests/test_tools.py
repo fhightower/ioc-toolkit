@@ -23,6 +23,7 @@ class ToolTester(unittest.TestCase):
                 rv = self.app.get(url)
                 self.assertIn(tool['name'], rv.data.decode())
                 self.assertIn(tool['description'], rv.data.decode())
+                assert '<span class="error">' not in rv.data.decode()
                 # it is important to html escape and unquote the input in the test below so that the html_escape_unescape and url_encode_decode tests (respectively) will work properly
                 self.assertIn(html.escape(urllib.parse.unquote(tool['tests'][test_action]['input'])), rv.data.decode())
                 # the html.escape below is important at least for the html_escape function

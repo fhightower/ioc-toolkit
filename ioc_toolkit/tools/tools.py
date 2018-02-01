@@ -7,6 +7,8 @@ import html
 import ipaddress
 import urllib.parse
 
+import ioc_fanger
+
 
 def url_encode_decode(text, action):
     """Handle URL encoding/decoding."""
@@ -137,5 +139,28 @@ def ipv6_expand_compress(text, action):
                 response = str(e)
         else:
             raise RuntimeError("Unknown action provided to ipv6_expand_compress function: {}".format(action))
+
+    return response, error
+
+
+def ioc_fang_defang(text, action):
+    """Expand or collapse an IPv6 address."""
+    response = str()
+    error = False
+
+    if action == 'fang':
+        try:
+            response = ioc_fanger.fang("example[.]com hXXp://bad[.]com/phishing.php")
+        except Exception as e:
+            error = True
+            response = str(e)
+    elif action == 'defang':
+        try:
+            response = ioc_fanger.defang("example.com http://bad.com/phishing.php")
+        except Exception as e:
+            error = True
+            response = str(e)
+    else:
+        raise RuntimeError("Unknown action provided to ioc_fang_defang function: {}".format(action))
 
     return response, error

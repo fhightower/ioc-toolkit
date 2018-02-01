@@ -9,7 +9,7 @@ import sys
 from flask import flash, Flask, render_template, redirect, request, url_for
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "./")))
-from tools.tools import url_encode_decode, punycode, base64_encode_decode, html_escape, ipv6_expand_compress
+from tools.tools import url_encode_decode, punycode, base64_encode_decode, html_escape, ipv6_expand_compress, ioc_fang_defang
 
 tools = [{
     'name': 'Punycode',
@@ -94,6 +94,22 @@ tools = [{
             'input': '2001:0db8:0000:0000:0000:0000:0000:1000',
             'output': '2001:db8:0:0:0:0:0:1000'
         },
+    }
+}, {
+    'name': 'Indicator of Compromise Fanger/Defanger',
+    'description': 'Fang and defang indicators of compromise.',
+    'function': ioc_fang_defang,
+    'actions': ['fang', 'defang'],
+    'uri': 'ioc-fang-defang',
+    'tests': {
+        'fang': {
+            'input': 'example[.]com 1[.]2[.]3[.]4 hXXp://test[.]com/testing/bad.php hxxps://example[.]com',
+            'output': 'example.com 1.2.3.4 http://test.com/testing/bad.php https://example.com'
+        },
+        'defang': {
+            'input': 'example.com 1.2.3.4 http://test.com/testing/bad.php https://example.com',
+            'output': 'example[.]com 1[.]2[.]3[.]4 hXXp://test[.]com/testing/bad.php hxxps://example[.]com'
+        }
     }
 }]
 
