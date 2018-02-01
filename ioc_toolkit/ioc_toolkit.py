@@ -79,7 +79,7 @@ tools = [{
     'name': 'IPv6 Expander/Compressor',
     'description': 'Expand (Explode)/Compress (Collapse) an IPv6 Address.',
     'function': ipv6_expand_compress,
-    'actions': ['expand', 'compress'],
+    'actions': ['expand', 'compress', 'threatconnect format'],
     'uri': 'ipv6-expand-compress',
     'tests': {
         'expand': {
@@ -89,7 +89,11 @@ tools = [{
         'compress': {
             'input': '2001:0db8:0000:0000:0000:0000:0000:1000',
             'output': '2001:db8::1000'
-        }
+        },
+        'threatconnect format': {
+            'input': '2001:0db8:0000:0000:0000:0000:0000:1000',
+            'output': '2001:db8:0:0:0:0:0:1000'
+        },
     }
 }]
 

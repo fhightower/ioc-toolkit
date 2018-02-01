@@ -126,6 +126,15 @@ def ipv6_expand_compress(text, action):
             except Exception as e:
                 error = True
                 response = str(e)
+        elif action == 'threatconnect format':
+            try:
+                address_sections = [section.replace("0000", "xxxx").lstrip("0") for section in i.exploded.split(":")]
+
+                formatted_address_sections = ":".join(address_sections)
+                response = formatted_address_sections.replace("xxxx", "0")
+            except Exception as e:
+                error = True
+                response = str(e)
         else:
             raise RuntimeError("Unknown action provided to ipv6_expand_compress function: {}".format(action))
 
