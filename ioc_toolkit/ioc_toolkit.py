@@ -108,7 +108,7 @@ tools = [{
         },
         'defang': {
             'input': 'example.com 1.2.3.4 http://test.com/testing/bad.php https://example.com',
-            'output': 'example[.]com 1[.]2[.]3[.]4 hXXp://test[.]com/testing/bad.php hxxps://example[.]com'
+            'output': 'example[.]com 1[.]2.3[.]4 hXXp://test[.]com/testing/bad[.]php hXXps://example[.]com'
         }
     }
 }]

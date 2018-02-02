@@ -150,13 +150,13 @@ def ioc_fang_defang(text, action):
 
     if action == 'fang':
         try:
-            response = ioc_fanger.fang("example[.]com hXXp://bad[.]com/phishing.php")
+            response = ioc_fanger.fang(text)
         except Exception as e:
             error = True
             response = str(e)
     elif action == 'defang':
         try:
-            response = ioc_fanger.defang("example.com http://bad.com/phishing.php")
+            response = ioc_fanger.defang(text)
         except Exception as e:
             error = True
             response = str(e)
