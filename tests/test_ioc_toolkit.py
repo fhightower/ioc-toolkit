@@ -81,3 +81,15 @@ class IOCToolkitAPITestCase(unittest.TestCase):
         for tool in ioc_toolkit.tools:
             rv = self.app.post('/api/v1/{}'.format(tool['uri']), data={})
             assert "Usage: " in rv.data.decode()
+
+
+class IOCToolkitLegacyTests(unittest.TestCase):
+
+    def setUp(self):
+        self.app = ioc_toolkit.app.test_client()
+
+    def test_punycode_decode(self):
+        """Make sure the legacy, punycode coverter is working properly."""
+        for tool in ioc_toolkit.tools:
+            rv = self.app.post('/api/v1/convert?to=text&from=punycode'.format(tool['uri']), data='xn--l3h.com')
+            assert '☁.com' in rv.data.decode()
