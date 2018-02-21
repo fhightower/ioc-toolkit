@@ -3,6 +3,7 @@
 # -*- coding: utf-8 -*-
 
 import html
+import json
 import os
 import sys
 
@@ -190,12 +191,13 @@ def simple_api(page):
         if request.method == 'POST':
             # TODO: also check request.data
             if not request.form.get('action') or not request.form.get('text'):
-                if isinstance(request.data, dict):
-                    if not request.data.get('action') or not request.data.get('text'):
+                if request.data.decode('utf-8') != '':
+                    possible_request_json = json.loads(request.data.decode("utf-8"))
+                    if not possible_request_json.get('action') or not possible_request_json.get('text'):
                         return usage
                     else:
-                        request_data['action'] = request.data['action']
-                        request_data['text'] = request.data['text']
+                        request_data['action'] = possible_request_json['action']
+                        request_data['text'] = possible_request_json['text']
                 else:
                     return usage
             else:
