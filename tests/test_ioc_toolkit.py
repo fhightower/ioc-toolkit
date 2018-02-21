@@ -72,6 +72,13 @@ class IOCToolkitAPITestCase(unittest.TestCase):
             assert 'Usage: ' in rv.data.decode()
             assert 'An example JSON body is:' in rv.data.decode()
 
+    def test_posting_data(self):
+        """Make sure data posted as request.data gets handled properly."""
+        data = b'{\n"text": "hxxp://example.com/",\n"action": "fang"\n}'
+        rv = self.app.post('/api/v1/ioc-fang-defang', data=data)
+        assert rv.status_code == 200
+        assert 'http://example.com/' in rv.data.decode()
+
     def test_empty_post(self):
         """Make sure all of the api pages return basic usage instructions if they receive an empty post request."""
         for tool in ioc_toolkit.tools:

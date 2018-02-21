@@ -204,7 +204,7 @@ def simple_api(page):
                 request_data['action'] = request.form['action']
                 request_data['text'] = request.form['text']
 
-            return data['function'](request_data['text'], request_data['action'])
+            return data['function'](request_data['text'], request_data['action'])[0]
         else:
             return usage
 
