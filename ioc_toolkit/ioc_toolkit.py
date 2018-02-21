@@ -182,12 +182,23 @@ def simple_api(page):
     if data is None:
         return 'The requested page ({}) does not exist.'.format(page)
     else:
+        request_data = dict()
         if request.method == 'POST':
             # TODO: also check request.data
             if not request.form.get('action') or not request.form.get('text'):
-                return usage
+                if isinstance(request.data, dict):
+                    if not request.data.get('action') or not request.data.get('text'):
+                        return usage
+                    else:
+                        request_data['action'] = request.data['action']
+                        request_data['text'] = request.data['text']
+                else:
+                    return usage
             else:
-                return data['function'](request.form.get('text'), request.form.get('action'))
+                request_data['action'] = request.form['action']
+                request_data['text'] = request.form['text']
+
+            return data['function'](request_data['text'], request_data['action'])
         else:
             return usage
 
