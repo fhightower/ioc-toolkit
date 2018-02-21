@@ -180,10 +180,6 @@ def simple_api(page):
 
     usage = 'Usage: To use this branch, make a POST request to <code>/api/v1/{}</code> with a JSON body that includes a "text" key providing the text which will be operated on and an "action" which will tell the API what to do with the text. The available action(s) for this page is/are: {}. An example JSON body is: <code>{{ "text": "{}", "action": "{}" }}</code>.'.format(page, ", ".join(data['actions']), html.escape(data['tests'][data['actions'][0]]['input']), data['actions'][0])
 
-    print("request: {}".format(request))
-    print("request: {}".format(request.data))
-    print("request: {}".format(request.form))
-
     if data is None:
         return 'The requested page ({}) does not exist.'.format(page)
     else:
