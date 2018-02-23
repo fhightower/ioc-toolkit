@@ -30,14 +30,14 @@ class IOCToolkitUITestCase(unittest.TestCase):
         for tool in ioc_toolkit.tools:
             rv = self.app.get('/{}'.format(tool['uri']))
             self.assertIn(tool['name'], rv.data.decode())
-            self.assertIn(tool['description'], rv.data.decode())
+            self.assertIn(tool['description'].split("<")[0], rv.data.decode())
 
     def test_missing_text(self):
         """Make sure a error message is shown for requests without text."""
         for tool in ioc_toolkit.tools:
             rv = self.app.get('/{}?action=Decode'.format(tool['uri']))
             self.assertIn(tool['name'], rv.data.decode())
-            self.assertIn(tool['description'], rv.data.decode())
+            self.assertIn(tool['description'].split("<")[0], rv.data.decode())
             assert 'Please enter some text to decode' in rv.data.decode()
 
     def test_missing_action(self):
@@ -45,7 +45,7 @@ class IOCToolkitUITestCase(unittest.TestCase):
         for tool in ioc_toolkit.tools:
             rv = self.app.get('/{}?text=test'.format(tool['uri']))
             self.assertIn(tool['name'], rv.data.decode())
-            self.assertIn(tool['description'], rv.data.decode())
+            self.assertIn(tool['description'].split("<")[0], rv.data.decode())
 
     def test_non_exist_page(self):
         """Make sure requests to non-exist pages are redirected to the home page."""

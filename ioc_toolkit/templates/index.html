@@ -2,7 +2,7 @@
 {% block content %}
     <ul>
     {% for tool in tools %}
-        <li><a href="/{{ tool.uri }}">{{ tool.name }}</a> - {{ tool.description }}</li>
+        <li><a href="/{{ tool.uri }}">{{ tool.name }}</a> - {{ tool.description|safe }}</li>
     {% endfor %}
     </ul>
 {% endblock %}
