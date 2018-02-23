@@ -2,3 +2,4 @@ Flask
 gunicorn
 pytest
 ioc-fanger
+ioc-finder

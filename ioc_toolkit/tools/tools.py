@@ -8,6 +8,7 @@ import ipaddress
 import urllib.parse
 
 import ioc_fanger
+import ioc_finder
 
 
 def url_encode_decode(text, action):
@@ -164,3 +165,33 @@ def ioc_fang_defang(text, action):
         raise RuntimeError("Unknown action provided to ioc_fang_defang function: {}".format(action))
 
     return response, error
+
+
+def create_share_comment_link(text, action):
+    """Parse indicators from the text and create links for ThreatConnect share comments."""
+    response = str()
+    error = False
+
+    # map the keys from the ioc finder to the indicator types expected by threatconnect (respectively)
+    ioc_finder_to_threatconnect_mappings = {
+        'domain': 'host',
+        'email': 'emailaddress',
+        'ipv4': 'address',
+        'md5': 'file',
+        'sha1': 'file',
+        'sha256': 'file',
+        'url': 'url'
+    }
+
+    indicators = ioc_finder.find_iocs(text)
+
+    for indicator_type in indicators:
+        if indicator_type in ioc_finder_to_threatconnect_mappings:
+            tc_ind_type = ioc_finder_to_threatconnect_mappings[indicator_type]
+        else:
+            continue
+
+        for indicator in indicators[indicator_type]:
+            response += "\n[[{}:{}]]".format(indicator_type, indicator)
+
+    return response, False
