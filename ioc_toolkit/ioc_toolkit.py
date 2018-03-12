@@ -3,6 +3,7 @@
 # -*- coding: utf-8 -*-
 
 import html
+import json
 import os
 import sys
 
@@ -189,17 +190,29 @@ def simple_api(page):
     """Create a simple API from the tools."""
     data = _get_route_data(page)
 
-    usage = 'Usage: To use this branch, make a POST request to <code>/api/v1/{}</code> with a JSON body that includes a "text" key providing the text which will be operated on and an "action" which will tell the API what to do with the text. The available action(s) for this page is/are: {}. An example JSON body is: <code>{{ "text": "{}", "action": "{}" }}</code>'.format(page, ", ".join(data['actions']), html.escape(data['tests'][data['actions'][0]]['input']), data['actions'][0])
+    usage = 'Usage: To use this branch, make a POST request to <code>/api/v1/{}</code> with a JSON body that includes a "text" key providing the text which will be operated on and an "action" which will tell the API what to do with the text. The available action(s) for this page is/are: {}. An example JSON body is: <code>{{ "text": "{}", "action": "{}" }}</code>.'.format(page, ", ".join(data['actions']), html.escape(data['tests'][data['actions'][0]]['input']), data['actions'][0])
 
     if data is None:
         return 'The requested page ({}) does not exist.'.format(page)
     else:
+        request_data = dict()
         if request.method == 'POST':
             # TODO: also check request.data
             if not request.form.get('action') or not request.form.get('text'):
-                return usage
+                if request.data.decode('utf-8') != '':
+                    possible_request_json = json.loads(request.data.decode("utf-8"))
+                    if not possible_request_json.get('action') or not possible_request_json.get('text'):
+                        return usage
+                    else:
+                        request_data['action'] = possible_request_json['action']
+                        request_data['text'] = possible_request_json['text']
+                else:
+                    return usage
             else:
-                return data['function'](request.form.get('text'), request.form.get('action'))
+                request_data['action'] = request.form['action']
+                request_data['text'] = request.form['text']
+
+            return data['function'](request_data['text'], request_data['action'])[0]
         else:
             return usage
 
