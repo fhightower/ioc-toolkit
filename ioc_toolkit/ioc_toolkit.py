@@ -120,8 +120,8 @@ tools = [{
     'uri': 'tc-share-comment',
     'tests': {
         'create links': {
-            'input': 'example.com 1.2.3.4 http://example.org',
-            'output': '[[host:example.com]]\n[[address:1.2.3.4]]\n[[url:http://example.org]]'
+            'input': 'example.com',
+            'output': '[[host:example.com]]'
         }
     }
 }]

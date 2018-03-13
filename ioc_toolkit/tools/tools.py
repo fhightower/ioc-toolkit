@@ -182,7 +182,6 @@ def create_share_comment_link(text, action):
         'sha256': 'file',
         'url': 'url'
     }
-
     indicators = ioc_finder.find_iocs(text)
 
     for indicator_type in indicators:
@@ -192,6 +191,6 @@ def create_share_comment_link(text, action):
             continue
 
         for indicator in indicators[indicator_type]:
-            response += "\n[[{}:{}]]".format(indicator_type, indicator)
+            response += "\n[[{}:{}]]".format(tc_ind_type, indicator)
 
     return response, False

@@ -50,3 +50,11 @@ class ToolTester(unittest.TestCase):
         self.assertIn('Base64 Encoder/Decoder', rv.data.decode())
         self.assertIn('Encode/Decode base64 text.', rv.data.decode())
         self.assertIn('ERROR: Incorrect padding', rv.data.decode())
+
+    def test_share_comment_creator(self):
+        """Test the share comment creator."""
+        rv = self.app.get('/tc-share-comment?text=example.com+1.2.3.4+http%3A%2F%2Fexample.org&action=Create+Links')
+        self.assertIn('[[url:http://example.org]]', rv.data.decode())
+        self.assertIn('[[host:example.org]]', rv.data.decode())
+        self.assertIn('[[host:example.com]]', rv.data.decode())
+        self.assertIn('[[address:1.2.3.4]]', rv.data.decode())
